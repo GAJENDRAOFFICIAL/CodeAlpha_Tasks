@@ -1,0 +1,85 @@
+/*
+ * Project: Professional Scientific Calculator
+ * Domain: C Programming Internship - CodeAlpha
+ * Author: GAJENDRA JHA(ID: CA/DF1/3372)
+ * Description: Performs arithmetic and scientific operations with error handling.
+ */
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h> // Requires -lm flag when compiling on Linux
+
+// Function Prototypes
+void printMenu();
+void clearInputBuffer();
+
+int main() {
+    int choice;
+    double num1, num2, result;
+
+    printf("=== Professional Calculator v2.0 ===\n");
+
+    while(1) {
+        printMenu();
+        if (scanf("%d", &choice) != 1) {
+            printf("Error: Invalid Input. Please enter a number.\n");
+            clearInputBuffer();
+            continue;
+        }
+
+        if (choice == 7) {
+            printf("Exiting application. Goodbye!\n");
+            break;
+        }
+
+        // Handling Single Operand Logic (Square Root)
+        if (choice == 6) {
+            printf("Enter number: ");
+            scanf("%lf", &num1);
+            if (num1 < 0) {
+                printf("Error: Cannot calculate square root of negative number.\n");
+            } else {
+                printf("Result: %.2lf\n", sqrt(num1));
+            }
+            continue;
+        }
+
+        // Handling Dual Operand Logic
+        printf("Enter two numbers: ");
+        if (scanf("%lf %lf", &num1, &num2) != 2) {
+            printf("Error: Invalid numbers entered.\n");
+            clearInputBuffer();
+            continue;
+        }
+
+        switch (choice) {
+            case 1: printf("Result: %.2lf\n", num1 + num2); break;
+            case 2: printf("Result: %.2lf\n", num1 - num2); break;
+            case 3: printf("Result: %.2lf\n", num1 * num2); break;
+            case 4: 
+                if (num2 == 0) printf("Error: Division by Zero!\n");
+                else printf("Result: %.2lf\n", num1 / num2); 
+                break;
+            case 5: printf("Result: %.2lf\n", pow(num1, num2)); break; // Power
+            default: printf("Error: Unknown option.\n");
+        }
+    }
+    return 0;
+}
+
+void printMenu() {
+    printf("\n--------------------------\n");
+    printf("1. Addition (+)\n");
+    printf("2. Subtraction (-)\n");
+    printf("3. Multiplication (*)\n");
+    printf("4. Division (/)\n");
+    printf("5. Power (x^y)\n");
+    printf("6. Square Root (sqrt)\n");
+    printf("7. Exit\n");
+    printf("Select Operation: ");
+}
+
+void clearInputBuffer() {
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF);
+}
