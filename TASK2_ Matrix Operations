@@ -1,0 +1,80 @@
+/*
+ * Project: Dynamic Matrix Operations
+ * Domain: C Programming Internship - CodeAlpha
+ * Author: GAJENDRA JHA (ID: CA/DF1/3372)
+ * Description: Uses pointers and dynamic memory to handle matrices.
+ */
+
+#include <stdio.h>
+#include <stdlib.h>
+
+// Function to allocate memory for a matrix dynamically
+int** allocateMatrix(int rows, int cols) {
+    int *matrix = (int *)malloc(rows * sizeof(int *));
+    for (int i = 0; i < rows; i++) {
+        matrix[i] = (int *)malloc(cols * sizeof(int));
+    }
+    return matrix;
+}
+
+// Function to free memory (Prevent Memory Leaks)
+void freeMatrix(int **matrix, int rows) {
+    for (int i = 0; i < rows; i++) {
+        free(matrix[i]);
+    }
+    free(matrix);
+}
+
+void inputMatrix(int **matrix, int r, int c) {
+    printf("Enter elements:\n");
+    for (int i = 0; i < r; i++) {
+        for (int j = 0; j < c; j++) {
+            scanf("%d", &matrix[i][j]);
+        }
+    }
+}
+
+void printMatrix(int **matrix, int r, int c) {
+    printf("Matrix:\n");
+    for (int i = 0; i < r; i++) {
+        for (int j = 0; j < c; j++) {
+            printf("%4d", matrix[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+int main() {
+    int r, c;
+    printf("=== Dynamic Matrix Program ===\n");
+    printf("Enter rows and columns: ");
+    scanf("%d %d", &r, &c);
+
+    // Dynamic Allocation
+    int **m1 = allocateMatrix(r, c);
+    int **m2 = allocateMatrix(r, c);
+    int **sum = allocateMatrix(r, c);
+
+    printf("--- Matrix A ---\n");
+    inputMatrix(m1, r, c);
+    
+    printf("--- Matrix B ---\n");
+    inputMatrix(m2, r, c);
+
+    // Addition Logic
+    for (int i = 0; i < r; i++) {
+        for (int j = 0; j < c; j++) {
+            sum[i][j] = m1[i][j] + m2[i][j];
+        }
+    }
+
+    printf("\n--- Result (Sum) ---\n");
+    printMatrix(sum, r, c);
+
+    // Freeing memory (Very Important for Professional Code)
+    freeMatrix(m1, r);
+    freeMatrix(m2, r);
+    freeMatrix(sum, r);
+
+    return 0;
+}
