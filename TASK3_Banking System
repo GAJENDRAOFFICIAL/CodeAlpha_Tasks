@@ -1,0 +1,113 @@
+/*
+ * Project: Secure Banking System
+ * Domain: C Programming Internship - CodeAlpha
+ * Author: GAJENDRA JHA (ID: CA/DF1/3372)
+ * Features: Binary File Handling, Robust Error Checking
+ */
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct {
+    int accNum;
+    char name[50];
+    float balance;
+    int pin; // Added Security
+} Account;
+
+const char *FILE_NAME = "bank_database.dat";
+
+void clearInput() {
+    while (getchar() != '\n');
+}
+
+void createAccount() {
+    Account acc;
+    FILE *fp = fopen(FILE_NAME, "ab");
+    if (!fp) { printf("Error opening database.\n"); return; }
+
+    printf("\n--- New Account Form ---\n");
+    printf("Enter Account ID (Integer): ");
+    scanf("%d", &acc.accNum);
+    clearInput(); 
+    
+    printf("Enter Account Holder Name: ");
+    fgets(acc.name, 50, stdin);
+    acc.name[strcspn(acc.name, "\n")] = 0; // Remove newline
+
+    printf("Set a 4-digit PIN: ");
+    scanf("%d", &acc.pin);
+
+    printf("Initial Deposit: $");
+    scanf("%f", &acc.balance);
+
+    fwrite(&acc, sizeof(Account), 1, fp);
+    fclose(fp);
+    printf(">> Account Created Successfully!\n");
+}
+
+void performTransaction() {
+    int id, pin, found = 0, choice;
+    float amount;
+    Account acc;
+    FILE *fp = fopen(FILE_NAME, "rb");
+    FILE *temp = fopen("temp.dat", "wb");
+
+    if (!fp || !temp) { printf("System Error.\n"); return; }
+
+    printf("\nEnter Account ID: ");
+    scanf("%d", &id);
+    printf("Enter PIN: ");
+    scanf("%d", &pin);
+
+    while (fread(&acc, sizeof(Account), 1, fp)) {
+        if (acc.accNum == id && acc.pin == pin) {
+            found = 1;
+            printf("Login Success! Current Balance: $%.2f\n", acc.balance);
+            printf("1. Deposit\n2. Withdraw\nSelect: ");
+            scanf("%d", &choice);
+
+            if (choice == 1) {
+                printf("Enter Deposit Amount: ");
+                scanf("%f", &amount);
+                if (amount > 0) acc.balance += amount;
+            } else if (choice == 2) {
+                printf("Enter Withdraw Amount: ");
+                scanf("%f", &amount);
+                if (amount > 0 && amount <= acc.balance) acc.balance -= amount;
+                else printf("Invalid Amount or Insufficient Funds.\n");
+            }
+            printf(">> Transaction Complete. New Balance: $%.2f\n", acc.balance);
+        }
+        fwrite(&acc, sizeof(Account), 1, temp);
+    }
+
+    fclose(fp);
+    fclose(temp);
+    remove(FILE_NAME);
+    rename("temp.dat", FILE_NAME);
+
+    if (!found) printf(">> Error: Invalid ID or PIN.\n");
+}
+
+int main() {
+    int choice;
+    while (1) {
+        printf("\n=== CodeAlpha Bank System ===\n");
+        printf("1. Open New Account\n2. Login & Transact\n3. Exit\nChoice: ");
+        if (scanf("%d", &choice) != 1) {
+            printf("Invalid input.\n");
+            clearInput();
+            continue;
+        }
+
+        switch (choice) {
+            case 1: createAccount(); break;
+            case 2: performTransaction(); break;
+            case 3: exit(0);
+            default: printf("Invalid Option.\n");
+        }
+    }
+    return 0;
+}
