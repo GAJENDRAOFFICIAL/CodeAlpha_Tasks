@@ -7,9 +7,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h> // Requires -lm flag when compiling on Linux
+#include <math.h>
 
-// Function Prototypes
 void printMenu();
 void clearInputBuffer();
 
@@ -44,7 +43,7 @@ int main() {
             continue;
         }
 
-        // Handling Dual Operand Logic
+    
         printf("Enter two numbers: ");
         if (scanf("%lf %lf", &num1, &num2) != 2) {
             printf("Error: Invalid numbers entered.\n");
